@@ -1,0 +1,8 @@
+name: research-syndicate
+steps:
+  - {id: decompose, profile: orchestrator, prompt: "Decompose the research topic into independent evidence questions."}
+  - {id: research-a, profile: researcher, needs: [decompose], prompt: "Research assigned question A with citations."}
+  - {id: research-b, profile: researcher, needs: [decompose], prompt: "Research assigned question B with citations."}
+  - {id: evidence-review, profile: reviewer, needs: [research-a, research-b], prompt: "Verify every material claim against sources."}
+  - {id: synthesis, profile: synthesizer, needs: [evidence-review], prompt: "Produce the final evidence-backed report."}
+  - {id: judge, profile: judge, needs: [synthesis], prompt: "Check the report against acceptance criteria."}

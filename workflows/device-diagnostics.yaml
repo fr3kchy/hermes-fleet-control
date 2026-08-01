@@ -1,0 +1,8 @@
+name: device-diagnostics
+steps:
+  - {id: metrics, profile: diagnostics, prompt: "Collect bounded node metrics."}
+  - {id: hermes-health, profile: diagnostics, prompt: "Inspect Hermes health without mutation."}
+  - {id: logs, profile: diagnostics, prompt: "Inspect relevant service logs."}
+  - {id: diagnose, profile: diagnostician, needs: [metrics, hermes-health, logs], prompt: "Identify likely fault and evidence."}
+  - {id: propose, profile: diagnostician, needs: [diagnose], prompt: "Propose reversible repair."}
+  - {id: repair, profile: operator, needs: [propose], prompt: "Apply approved repair only.", mutates_host: true, approval_required: true}

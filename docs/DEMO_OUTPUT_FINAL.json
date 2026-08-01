@@ -1,0 +1,18 @@
+{
+  "task": {
+    "id": "f983a60b-a3b4-41df-b704-66446d408942",
+    "node_id": "a031c9f3-42ab-4db1-a3e8-f0a4e89f3855",
+    "profile": "default",
+    "prompt": "Return only: HERMES_FLEET_OK",
+    "status": "failed",
+    "output": "",
+    "error": "API call failed after 3 retries: HTTP 429: The usage limit has been reached",
+    "correlation_id": "36fe1657-0338-4499-ac88-dc64ccc71242",
+    "adapter_version": "hermes-cli-v1",
+    "created_at": "2026-07-12T03:47:50.682294+00:00",
+    "updated_at": "2026-07-12T03:48:06.258415+00:00",
+    "idempotency_key": "demo-1783828070681128368",
+    "lease_owner": null
+  },
+  "event_count": 54
+}

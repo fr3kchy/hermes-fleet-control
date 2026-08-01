@@ -1,0 +1,8 @@
+name: software-build-team
+steps:
+  - {id: architect, profile: architect, prompt: "Define boundaries, interfaces and acceptance criteria."}
+  - {id: implement, profile: developer, needs: [architect], prompt: "Implement using tests first."}
+  - {id: test, profile: tester, needs: [implement], prompt: "Run unit and integration tests."}
+  - {id: security, profile: security-reviewer, needs: [implement], prompt: "Review auth, secrets and input boundaries."}
+  - {id: ui-review, profile: ui-reviewer, needs: [implement], prompt: "Verify truthful states and accessibility."}
+  - {id: integrate, profile: integrator, needs: [test, security, ui-review], prompt: "Integrate only verified outputs."}

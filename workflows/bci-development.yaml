@@ -1,0 +1,7 @@
+name: bci-development
+steps:
+  - {id: research, profile: bci-researcher, prompt: "Define signal and experimental requirements."}
+  - {id: lsl, profile: python-lsl-engineer, needs: [research], prompt: "Implement typed LSL acquisition boundary."}
+  - {id: node-red, profile: node-red-engineer, needs: [research], prompt: "Implement event integration flow."}
+  - {id: visualisation, profile: visualisation-designer, needs: [lsl], prompt: "Build truthful live visualisation."}
+  - {id: validate, profile: validator, needs: [lsl, node-red, visualisation], prompt: "Validate timing, data integrity and acceptance criteria."}

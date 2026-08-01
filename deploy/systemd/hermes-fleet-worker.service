@@ -1,0 +1,22 @@
+[Unit]
+Description=Hermes Fleet Control Worker
+After=network-online.target hermes-fleet-api.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/parrot/repos/hermes-fleet-control
+EnvironmentFile=%h/.config/hermes-fleet-control/env
+ExecStart=/home/parrot/repos/hermes-fleet-control/.venv/bin/python -m hermes_fleet.worker
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/parrot/repos/hermes-fleet-control/data /home/parrot/.hermes
+UMask=0077
+
+[Install]
+WantedBy=default.target

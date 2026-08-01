@@ -1,0 +1,35 @@
+{
+  "task": {
+    "id": "9599efda-37ca-4f60-8d96-b6c900822f97",
+    "node_id": "a031c9f3-42ab-4db1-a3e8-f0a4e89f3855",
+    "profile": "default",
+    "status": "succeeded",
+    "output": "HERMES_FLEET_OK",
+    "error": "",
+    "correlation_id": "5e30f689-a7a4-4c82-b3df-5d680b3b2f6f",
+    "adapter_version": "hermes-cli-v1"
+  },
+  "fleet": {
+    "nodes": [
+      {
+        "id": "a031c9f3-42ab-4db1-a3e8-f0a4e89f3855",
+        "name": "parrot-local",
+        "status": "online",
+        "capabilities": {
+          "os": "linux",
+          "hostname": "parrot",
+          "architecture": "x86_64",
+          "cpu_count": 8,
+          "profiles": [
+            "default"
+          ],
+          "connector_version": "0.1.0"
+        },
+        "metrics": {},
+        "last_seen": "2026-07-12T02:38:50.480232+00:00",
+        "created_at": "2026-07-12T02:38:50.456776+00:00"
+      }
+    ]
+  },
+  "event_count": 4
+}

@@ -1,0 +1,7 @@
+name: local-gpu-workload
+steps:
+  - {id: inspect-gpu, profile: gpu-operator, prompt: "Verify CUDA, VRAM and competing processes."}
+  - {id: select-model, profile: gpu-operator, needs: [inspect-gpu], prompt: "Select a VRAM-compatible model."}
+  - {id: approve-run, profile: operator, needs: [select-model], prompt: "Approve bounded GPU execution.", mutates_host: true, approval_required: true}
+  - {id: run, profile: gpu-operator, needs: [approve-run], prompt: "Run bounded workload and save output.", mutates_host: true, approval_required: true}
+  - {id: release, profile: gpu-operator, needs: [run], prompt: "Release owned resources and verify cleanup.", mutates_host: true, approval_required: true}

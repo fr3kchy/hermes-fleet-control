@@ -1,0 +1,22 @@
+[Unit]
+Description=Hermes Fleet Control API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/parrot/repos/hermes-fleet-control
+EnvironmentFile=%h/.config/hermes-fleet-control/env
+ExecStart=/home/parrot/repos/hermes-fleet-control/.venv/bin/uvicorn hermes_fleet.app:app --host 127.0.0.1 --port 8876
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/parrot/repos/hermes-fleet-control/data
+UMask=0077
+
+[Install]
+WantedBy=default.target
