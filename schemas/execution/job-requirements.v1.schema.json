@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fr3kchy.github.io/schemas/execution/job-requirements.v1.schema.json",
+  "title": "FR3K task requirements + node capability snapshot (v1)",
+  "description": "Machine-readable task requirements (hard requirements, preferences, side effects, locality, execution class, concurrency) consumed by the capability-aware placement scheduler, plus the node capability projection it reasons over. Placement is two-stage: hard eligibility filtering first, then deterministic soft scoring; hard-ineligible nodes can never win soft scoring.",
+  "type": "object",
+  "required": ["schema", "job_id", "objective", "requires"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "fr3k.job.requirements.v1"},
+    "job_id": {"type": "string", "minLength": 1},
+    "work_key": {"type": "string", "description": "Stable semantic dedupe fingerprint (e.g. sha256:...)."},
+    "objective": {"type": "string"},
+    "priority": {"enum": ["P0", "P1", "P2", "P3"], "default": "P2"},
+    "requires": {"$ref": "#/$defs/requires"},
+    "prefers": {"$ref": "#/$defs/prefers"},
+    "concurrency": {"$ref": "#/$defs/concurrency"},
+    "side_effects": {"$ref": "#/$defs/side_effects"}
+  },
+  "$defs": {
+    "capability_need": {
+      "type": "object",
+      "required": ["id"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "description": "e.g. compute.python, rf.vna.measure.s11"},
+        "verification": {"$ref": "#/$defs/verification"}
+      }
+    },
+    "verification": {
+      "enum": [
+        "self_declared",
+        "observed",
+        "probe_verified",
+        "benchmark_verified",
+        "curator_verified"
+      ],
+      "description": "Ordered weakest -> strongest. A requirement is satisfied only by a strictly-or-equally strong verification state."
+    },
+    "requires": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "os": {"type": "array", "items": {"type": "string"}},
+        "architectures": {"type": "array", "items": {"type": "string"}},
+        "min_ram_mb": {"type": "integer", "minimum": 0},
+        "min_storage_mb": {"type": "integer", "minimum": 0},
+        "capabilities": {"type": "array", "items": {"$ref": "#/$defs/capability_need"}},
+        "credentials": {"type": "array", "items": {"type": "string"}, "description": "Symbolic credential class names only; never secret values."},
+        "data_refs": {"type": "array", "items": {"type": "string"}},
+        "locality_required": {"type": "boolean", "default": false, "description": "When true, absent local data is a HARD rejection; when false it only biases the soft score."},
+        "trust_level_min": {"type": "integer", "minimum": 0, "maximum": 5, "default": 3},
+        "execution_class": {"enum": ["AUTO", "OBSERVE", "APPROVAL", "PHYSICAL"]},
+        "peripherals": {"type": "array", "items": {"type": "string"}},
+        "accelerators": {"type": "array", "items": {"type": "string"}},
+        "transports": {"type": "array", "items": {"type": "string"}},
+        "max_latency_ms": {"type": ["integer", "null"], "minimum": 0},
+        "min_battery_pct": {"type": "integer", "minimum": 0, "maximum": 100},
+        "requires_compute": {"type": "boolean", "default": true},
+        "allow_instrument_worker": {"type": "boolean", "default": false, "description": "Explicit opt-in; instrument-only devices are otherwise never scheduled as generic compute workers."}
+      }
+    },
+    "prefers": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "plugged_in": {"type": "boolean", "default": true},
+        "low_latency_to_data": {"type": "boolean", "default": true},
+        "accelerators": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "concurrency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "group": {"type": "string", "minLength": 1, "default": "global"},
+        "safe": {"type": "boolean", "default": false, "description": "Parallel placement is opt-in; false keeps the job serialized."},
+        "max_parallelism": {"type": "integer", "minimum": 1, "default": 1},
+        "exclusive": {"type": "boolean", "default": false, "description": "Global-exclusive gate: always serialized."}
+      }
+    },
+    "side_effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "external_write": {"type": "boolean", "default": false},
+        "physical": {"type": "boolean", "default": false}
+      }
+    },
+    "node_snapshot": {
+      "type": "object",
+      "description": "Point-in-time capability-registry projection of one node (consumed by hard_filter/soft_score).",
+      "required": ["node_id", "device_class", "os", "architecture", "trust_tier"],
+      "additionalProperties": false,
+      "properties": {
+        "node_id": {"type": "string"},
+        "device_class": {"type": "string", "description": "instrument/sensor/esp32/tdeck/microcontroller are instrument-only and never generic compute workers."},
+        "os": {"type": "string"},
+        "architecture": {"type": "string"},
+        "trust_tier": {"type": "integer", "minimum": 0, "maximum": 5},
+        "allowed_execution_classes": {"type": "array", "items": {"enum": ["AUTO", "OBSERVE", "APPROVAL", "PHYSICAL"]}},
+        "capabilities": {"type": "object", "additionalProperties": {"$ref": "#/$defs/node_capability"}},
+        "ram_free_mb": {"type": "integer", "minimum": 0},
+        "storage_free_mb": {"type": "integer", "minimum": 0},
+        "accelerators": {"type": "array", "items": {"type": "string"}},
+        "peripherals": {"type": "array", "items": {"type": "string"}},
+        "transports": {"type": "array", "items": {"type": "string"}},
+        "latency_ms": {"type": "integer", "minimum": 0},
+        "power_source": {"enum": ["ac", "battery"]},
+        "battery_pct": {"type": ["integer", "null"], "minimum": 0, "maximum": 100},
+        "charging": {"type": "boolean"},
+        "thermal_c": {"type": "number"},
+        "thermal_limit_c": {"type": "number"},
+        "throttled": {"type": "boolean"},
+        "data_refs": {"type": "array", "items": {"type": "string"}},
+        "online": {"type": "boolean"},
+        "quarantined": {"type": "boolean"},
+        "identity_verified": {"type": "boolean"},
+        "workspace_id": {"type": ["string", "null"]},
+        "active_work": {"type": "integer", "minimum": 0},
+        "recent_success_rate": {"type": "integer", "minimum": 0, "maximum": 100},
+        "recent_failures": {"type": "integer", "minimum": 0}
+      }
+    },
+    "node_capability": {
+      "type": "object",
+      "required": ["id", "verification"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string"},
+        "verification": {"$ref": "#/$defs/verification"},
+        "expires_at": {"type": ["string", "null"], "format": "date-time"},
+        "evidence_ref": {"type": ["string", "null"]}
+      }
+    }
+  }
+}
