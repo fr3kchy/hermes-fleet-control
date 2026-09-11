@@ -6,7 +6,8 @@ It provides durable task dispatch, authenticated node enrolment, event replay, o
 
 ## Verified status
 
-- **16 tests passing** across security, migrations, adapters, service files and orchestration
+- **36 tests passing** across security, migrations, adapters, service files, orchestration, transactional leases, fencing and failure injection
+- transactional lease authority with monotonic fencing tokens, heartbeat/expiry recovery, replay-safe idempotency and an append-only reducible event ledger (`src/hermes_fleet/leases.py`, `docs/LEASES-FENCING.md`)
 - SQLite WAL integrity checks and schema-versioned migrations
 - production startup refusal for default enrolment/operator secrets
 - single-use enrolment and per-node HMAC-signed heartbeats
