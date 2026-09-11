@@ -1,0 +1,77 @@
+{
+  "suite": "failure-injection",
+  "generated_at": "2026-09-11T19:09:10.026408+00:00",
+  "scenarios": [
+    {
+      "scenario": "crash_mid_grant_rollback",
+      "passed": true,
+      "detail": {
+        "leases_after_crash": 0,
+        "fence_rows_after_crash": 0,
+        "next_fence": 1
+      }
+    },
+    {
+      "scenario": "lock_contention_fails_closed",
+      "passed": true,
+      "detail": {
+        "failed_closed": true,
+        "leases_during_lock": 0,
+        "later_fence": 1
+      }
+    },
+    {
+      "scenario": "stale_worker_after_reassignment",
+      "passed": true,
+      "detail": {
+        "side_effect_rejected": true,
+        "result_rejected": true,
+        "fence_a": 1,
+        "fence_b": 2
+      }
+    },
+    {
+      "scenario": "duplicate_result_rejected",
+      "passed": true,
+      "detail": {
+        "second_rejected": true,
+        "completed_events": 1
+      }
+    },
+    {
+      "scenario": "expiry_storm_idempotent",
+      "passed": true,
+      "detail": {
+        "first_pass": 20,
+        "second_pass": 0,
+        "expired_events": 20
+      }
+    },
+    {
+      "scenario": "ledger_gap_detected",
+      "passed": true,
+      "detail": {
+        "gaps": [
+          2
+        ]
+      }
+    },
+    {
+      "scenario": "renew_superseded_rejected",
+      "passed": true,
+      "detail": {
+        "old_renew_rejected": true,
+        "new_fence_stable": true
+      }
+    },
+    {
+      "scenario": "invalid_inputs_fail_closed",
+      "passed": true,
+      "detail": {
+        "bad_status": true,
+        "bad_event": true
+      }
+    }
+  ],
+  "all_passed": true
+}
