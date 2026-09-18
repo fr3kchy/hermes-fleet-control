@@ -12,7 +12,7 @@ def enroll(client: TestClient) -> dict:
 
 
 def test_task_is_durable_before_worker_confirms_success(tmp_path: Path):
-    settings = Settings(database_path=tmp_path / "fleet.db", enrollment_secret="test-secret", operator_token="operator-token", hermes_binary="/bin/echo")
+    settings = Settings(database_path=tmp_path / "fleet.db", enrollment_secret="test-secret", operator_token="operator-token", hermes_binary="/bin/echo", legacy_worker_mode=True)
     client = TestClient(create_app(settings))
     client.headers["Authorization"] = "Bearer operator-token"
     node = enroll(client)

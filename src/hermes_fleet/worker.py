@@ -14,6 +14,8 @@ class Worker:
         self.adapter = HermesCliAdapterV1(settings.hermes_binary, settings.task_timeout_seconds)
 
     def run_once(self) -> bool:
+        if not self.settings.legacy_worker_mode:
+            return False
         task = self.db.lease_task(self.worker_id)
         if not task:
             return False
@@ -31,6 +33,8 @@ class Worker:
 
 def main() -> None:
     settings = Settings()
+    if not settings.legacy_worker_mode:
+        raise SystemExit("Legacy direct worker is disabled. Set HFC_LEGACY_WORKER_MODE=true for one-release compatibility mode.")
     Worker(Database(settings.database_path), settings).run_forever()
 
 
