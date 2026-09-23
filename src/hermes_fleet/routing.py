@@ -30,7 +30,10 @@ def _age_seconds(timestamp: str | None) -> float:
 
 
 def evaluate_node(node: dict, requirements: dict, profile: str, risk_class: int, active_node: int = 0, active_profile: int = 0) -> RouteCandidate:
-    caps, policy, metrics = node.get("capabilities") or {}, node.get("policy") or {}, node.get("metrics") or {}
+    registry = node.get("registry") or {}
+    if registry and (registry.get("quarantined") or not registry.get("eligible")):
+        return RouteCandidate(node["id"], False, 0, ("REGISTRY_INELIGIBLE",), {})
+    caps, policy, metrics = (registry.get("capabilities") or node.get("capabilities") or {}, node.get("policy") or {}, node.get("metrics") or {})
     rejected: list[str] = []
     if node.get("status") not in {"online", "degraded"} or _age_seconds(node.get("last_seen")) > 90:
         rejected.append("NODE_STALE_OR_OFFLINE")
